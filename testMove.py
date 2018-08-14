@@ -22,7 +22,7 @@ class TestBoardAdjust(unittest.TestCase):
 
 
         self.assertEqual(testCoord1, sureCoord1)
-        self.assertEqual(testCoord2, sureCoord2)
+        self.assertEqual(testCoord2, sureCoord2) 
         self.assertEqual(testCoord3, sureCoord3)
         self.assertEqual(testCoord4, sureCoord4)
 

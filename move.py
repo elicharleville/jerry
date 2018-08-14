@@ -16,8 +16,6 @@ def moveToCoords(mString):
     coordSet[0] = nSet1
     coordSet[1] = nSet2
 
-
-
     return coordSet
 
 def boardAdjust(coordSet):
@@ -93,9 +91,12 @@ def retBoardMove(mString): # just combines the above code
 
 class Move:
     #import board
-    def __init__(self, mString):
-        self.mString = mString
-        self.coordSet = retBoardMove(self.mString)
+    def __init__(self, move):
+        if isinstance(move, str):
+            self.mString = move
+            self.coordSet = retBoardMove(self.mString)
+        elif isinstance(move, list):
+            self.coordSet = move
 
     #TODO  allow object to be constructed from coordinate set
 
@@ -113,7 +114,8 @@ if __name__ == "__main__":
     #move.printMove()
 
     coordSet = retBoardMove("b7d5")
-    print(coordSet)
+    move = Move(coordSet)
+    print(move.coordSet)
 
 
     
