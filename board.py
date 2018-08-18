@@ -1,6 +1,7 @@
 import numpy #prolly not needed
 from enum import Enum
 from pprint import pprint
+import move
 
 # 2d numpy array
 # single digit ints as notifierss
@@ -25,6 +26,14 @@ P, B, N, R, Q, K = 1, 2, 3, 4, 5, 6
 p, b, n, r, q, k = -1, -2, -3, -4, -5, -6
 WHITE = 1
 BLACK = 0
+
+
+
+# need some helper functions:
+# checkDiag() --used to help show how far I move diagonally
+# checkCross() -- shows how far I can move horizontally 
+# checkCheck() -- check if the king is in trouble check-- probably needs to be called after every move
+# ^^ because of pins 
 
 class Board:
     def __init__(self):
@@ -93,7 +102,144 @@ class Board:
         print()
     def getKingMoves(self, row, col):
         print()
+    def checkDiag(self, row, col): #returns list of moves
+        # need to check both diagonal
+        # ultimately, both loops put moves into the returning list 
+        # first diagonal--downward sloping
+        moveList = []
+        tRow = row
+        tCol = col 
+        
+        while True: #top edge
+            tRow -= 1
+            tCol -= 1 
+            if tCol < 0 or tCol > 7 or tRow < 0 or tRow > 7:
+                break
 
+            tSquare = self.board[tRow][tCol]
+
+            if tSquare != 0:
+                break
+            moveList.append(move.Move([[row, col],[tRow, tCol]]))
+        
+        tRow = row
+        tCol = col
+
+        while True: #bottom edge
+            tRow += 1
+            tCol += 1 
+            if tCol < 0 or tCol > 7 or tRow < 0 or tRow > 7:
+                break
+
+            tSquare = self.board[tRow][tCol]
+
+            if tSquare != 0:
+                break
+            moveList.append(move.Move([[row, col],[tRow, tCol]]))
+
+        #second diagonal -- upward sloping 
+        tRow = row
+        tCol = col
+
+        while True: # top edge 
+            tRow -= 1
+            tCol += 1 
+            if tCol < 0 or tCol > 7 or tRow < 0 or tRow > 7:
+                break
+
+            tSquare = self.board[tRow][tCol]
+
+            if tSquare != 0:
+                break
+            moveList.append(move.Move([[row, col],[tRow, tCol]]))
+
+        tRow = row
+        tCol = col
+        
+        while True: # bottom edge 
+            tRow += 1
+            tCol -= 1 
+            if tCol < 0 or tCol > 7 or tRow < 0 or tRow > 7:
+                break
+
+            tSquare = self.board[tRow][tCol]
+
+            if tSquare != 0:
+                break
+            moveList.append(move.Move([[row, col],[tRow, tCol]]))
+        
+        return moveList
+    def checkCross(self, row, col):
+        moveList = []
+        tRow = row
+        tCol = col
+
+        # need to check vertical and horizontal lines 
+
+        while True: #vertical first -- vert top
+            tRow -= 1
+            if tRow < 0 or tRow > 7:
+                break
+            tSquare = self.board[tRow][tCol]
+            if tSquare != 0:
+                break
+            moveList.append(move.Move([[row, col],[tRow, tCol]]))
+
+        tRow = row
+        tCol = col
+        while True: #vertical first -- vert bottom
+            tRow += 1
+            if tRow < 0 or tRow > 7:
+                break
+            tSquare = self.board[tRow][tCol]
+            if tSquare != 0:
+                break
+            moveList.append(move.Move([[row, col],[tRow, tCol]]))
+
+        tRow = row
+        tCol = col
+        while True: #-- vert top
+            tRow -= 1
+            if tRow < 0 or tRow > 7:
+                break
+            tSquare = self.board[tRow][tCol]
+            if tSquare != 0:
+                break
+            moveList.append(move.Move([[row, col],[tRow, tCol]]))
+
+        tRow = row
+        tCol = col
+        while True: #-- horiz left
+            tCol -= 1
+            if tCol < 0 or tCol > 7: #TODO  optimize these checking methods to only check necessary bounds
+                break
+            tSquare = self.board[tRow][tCol]
+            if tSquare != 0:
+                break
+            moveList.append(move.Move([[row, col],[tRow, tCol]]))
+
+        
+        tRow = row
+        tCol = col
+        while True: #-- horiz right
+            tCol += 1
+            if tCol < 0 or tCol > 7: #TODO  optimize these checking methods to only check necessary bounds
+                break
+            tSquare = self.board[tRow][tCol]
+            if tSquare != 0:
+                break
+            moveList.append(move.Move([[row, col],[tRow, tCol]]))
+        
+        return moveList
+
+    def checkCheck(self, row, col):
+        print()
+
+
+
+
+
+#TODO make some test boards 
 #test code/ main
 if __name__ == "__main__":
     newBoard = Board()
