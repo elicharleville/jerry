@@ -3,6 +3,9 @@ from __future__ import division
 # string is parsed to find out what it does
 
 #check(): checks the move
+
+
+#TODO consider adding coordsT
 def moveToCoords(mString):
 
     #coordSet = [[-99,-99],[-99,-99]]

@@ -35,10 +35,15 @@ BLACK = 0
 # checkCheck() -- check if the king is in trouble check-- probably needs to be called after every move
 # ^^ because of pins 
 
+def printMoveList(moveList):
+    for i in moveList:
+        print(i.coordSet)
+
 class Board:
     def __init__(self):
         #from move import Move
         self.nextTurn = WHITE  
+        self.check = False 
         self.board = [[r, n, b, q, k, b, n, r],                                           
                     [p, p, p, p, p, p, p, p],                                           
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
@@ -243,7 +248,28 @@ class Board:
 #test code/ main
 if __name__ == "__main__":
     newBoard = Board()
+    newBoard1 = Board()
+    newBoard2 = Board()
+    newBoard3 = Board()
+    newBoard4 = Board()
+    newBoard5 = Board()
+
+    newBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, Q, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                             
+                    [0, 0, 0, 0, 0, 0, 0, 0],]
     
+
+    testList = newBoard.checkCross(4, 3)
+
+
+
+    printMoveList(testList)
+
 
     
     newBoard.printBoard()
