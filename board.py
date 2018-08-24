@@ -37,7 +37,7 @@ BLACK = 0
 
 def printMoveList(moveList):
     for i in moveList:
-        print(i.coordSet)
+        print(i.mString)
 
 class Board:
     def __init__(self):
@@ -102,12 +102,13 @@ class Board:
     def getKnightMoves(self, row, col):
         print()
     def getRookMoves(self, row, col):
-        print()
+        moveList = self.checkCross( row, col)
+        return moveList
     def getQueenMoves(self, row, col):
         print()
     def getKingMoves(self, row, col):
         print()
-    def checkDiag(self, row, col): #returns list of moves
+    def checkDiag(self, row, col): #returns list of moves TODO needs fixing
         # need to check both diagonal
         # ultimately, both loops put moves into the returning list 
         # first diagonal--downward sloping
@@ -267,9 +268,19 @@ if __name__ == "__main__":
     testList = newBoard.checkCross(4, 3)
 
 
+    
+
+    testList1 = newBoard.checkCross(4, 3)
+
+
+
 
     printMoveList(testList)
 
+    print("for cross:")
+
+
+    printMoveList(testList1)
 
     
     newBoard.printBoard()
