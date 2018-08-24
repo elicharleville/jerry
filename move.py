@@ -6,7 +6,7 @@ from __future__ import division
 
 
 #TODO consider adding coordsT
-def moveToCoords(mString):
+def moveToCoords(mString): # converts string to list coordinate 
 
     #coordSet = [[-99,-99],[-99,-99]]
     #test = float(len(mString/2))
@@ -145,10 +145,6 @@ class Move:
         print(self.mString)
 
 
-
-
-    
-
 if __name__ == "__main__":
     #move = Move("e2e4")
     #move.printMove()
@@ -159,13 +155,4 @@ if __name__ == "__main__":
 
     coordStr = coordsToMove(coordSet)
     print(coordStr)
-
-
-    
-
-
-
-
-
-
 

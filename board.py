@@ -1,4 +1,5 @@
-import numpy #prolly not needed
+
+#import numpy #prolly not needed
 from enum import Enum
 from pprint import pprint
 import move
@@ -21,7 +22,6 @@ import move
 #    -print() -- returns nice view of board layout
 
 # definitions
-
 P, B, N, R, Q, K = 1, 2, 3, 4, 5, 6
 p, b, n, r, q, k = -1, -2, -3, -4, -5, -6
 WHITE = 1
@@ -40,18 +40,22 @@ def printMoveList(moveList):
         print(i.mString)
 
 class Board:
-    def __init__(self):
+    def __init__(self, nextTurn, check, board = None):
         #from move import Move
-        self.nextTurn = WHITE  
-        self.check = False 
-        self.board = [[r, n, b, q, k, b, n, r],                                           
-                    [p, p, p, p, p, p, p, p],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [P, P, P, P, P, P, P, P],                                             
-                    [R, N, B, Q, K, B, N, R]]
+        self.nextTurn = nextTurn  
+        self.check = check 
+        if board is None:
+            self.board = [[r, n, b, q, k, b, n, r],                                           
+                        [p, p, p, p, p, p, p, p],                                           
+                        [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                        [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                        [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                        [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                        [P, P, P, P, P, P, P, P],                                             
+                        [R, N, B, Q, K, B, N, R]]
+        else:
+            self.board = board 
+        
                   
     #prints the board in graphics mode
     def printBoard(self):
@@ -91,21 +95,54 @@ class Board:
         print()
         print("   a b c d e f g h")
 
-
-
     def getLegalMoves(self): #return list of moves
         print()
-    def getPawnMoves(self, row, col):
-        print()
+    def getPawnMoves(self, row, col): 
+        #1. check if pawn is in starting positon based on what side its on
+        #2. if so, give ability to move up two squares
+        moveList = []
+        if self.nextTurn == WHITE:
+            # handle checking for double jumping for pawn--WHITE
+            if self.board[row - 1][col] == 0: 
+                moveList.append(move.Move([[row, col],[row - 1, col]]))
+            if row == 6:    
+                if self.board[row - 2][col] == 0: 
+                    moveList.append(move.Move([[row, col],[row - 2, col]]))
+
+            # checking if black pieces are in immediate diag
+            if self.board[row - 1][col - 1] < 0:
+                moveList.append(move.Move([[row, col],[row - 1, col -1]]))
+            if self.board[row - 1][col + 1] < 0:
+                moveList.append(move.Move([[row, col],[row - 1, col + 1]]))
+            
+        else: #BLACK
+            if self.board[row + 1][col] == 0: 
+                moveList.append(move.Move([[row, col],[row + 1, col]]))
+            if row == 1: 
+                if self.board[row + 2][col] == 0:
+                    moveList.append(move.Move([[row, col],[row + 2, col]]))
+
+            # checking if white pieces are in imediate diag
+            if self.board[row + 1][col - 1] > 0:
+                moveList.append(move.Move([[row, col],[row + 1, col - 1]]))
+            if self.board[row + 1][col + 1] > 0:
+                moveList.append(move.Move([[row, col],[row + 1, col + 1]]))
+        return moveList
+  
     def getbishopMoves(self, row, col):
-        print()
+        moveList = self.checkDiag(row,col)
+        return moveList
+
     def getKnightMoves(self, row, col):
         print()
     def getRookMoves(self, row, col):
-        moveList = self.checkCross( row, col)
+        moveList = self.checkCross(row, col)
         return moveList
     def getQueenMoves(self, row, col):
-        print()
+        diagList = self.checkDiag(row, col)
+        crossList = self.checkCross(row, col)
+        moveList = diagList + crossList
+        return moveList 
     def getKingMoves(self, row, col):
         print()
     def checkDiag(self, row, col): #returns list of moves TODO needs fixing
@@ -248,13 +285,7 @@ class Board:
 #TODO make some test boards 
 #test code/ main
 if __name__ == "__main__":
-    newBoard = Board()
-    newBoard1 = Board()
-    newBoard2 = Board()
-    newBoard3 = Board()
-    newBoard4 = Board()
-    newBoard5 = Board()
-
+    newBoard = Board(WHITE, False)
     newBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
@@ -265,25 +296,46 @@ if __name__ == "__main__":
                     [0, 0, 0, 0, 0, 0, 0, 0],]
     
 
-    testList = newBoard.checkCross(4, 3)
+
+    testBoard = Board(WHITE, False)
+    testBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, p, 0, p, 0, 0, 0],                                           
+                    [0, 0, 0, P, 0, 0, 0, 0],                                             
+                    [0, 0, 0, 0, 0, 0, 0, 0],]
 
 
-    
-
-    testList1 = newBoard.checkCross(4, 3)
-
-
-
+    testList = testBoard.getPawnMoves(6, 3)
 
     printMoveList(testList)
+    #testList = newBoard.checkDiag(4, 3)
 
-    print("for cross:")
+    testBoard.printBoard()
+    
+
+    #testList1 = newBoard.checkCross(4, 3)
 
 
-    printMoveList(testList1)
+
+
+    #printMoveList(testList)
+
+    #print("for cross:")
+
+
+    #printMoveList(testList1)
+
+    #queenList = newBoard.getQueenMoves(4, 3)
+
+    #print("for queen:")
+
+    #printMoveList(queenList)
 
     
-    newBoard.printBoard()
+    #newBoard.printBoard()
 
 
 
