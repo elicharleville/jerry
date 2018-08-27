@@ -1,4 +1,3 @@
-
 #import numpy #prolly not needed
 from enum import Enum
 from pprint import pprint
@@ -25,7 +24,7 @@ import move
 P, B, N, R, Q, K = 1, 2, 3, 4, 5, 6
 p, b, n, r, q, k = -1, -2, -3, -4, -5, -6
 WHITE = 1
-BLACK = 0
+BLACK = -1
 
 
 
@@ -145,24 +144,36 @@ class Board:
         return moveList 
     def getKingMoves(self, row, col):
         print()
-    def checkDiag(self, row, col): #returns list of moves TODO needs fixing
+    def checkDiag(self, row, col): #returns list of moves
         # need to check both diagonal
         # ultimately, both loops put moves into the returning list 
-        # first diagonal--downward sloping
+        
         moveList = []
         tRow = row
         tCol = col 
+
+
+        if self.nextTurn == WHITE: # sideConst is used when determining which pieces are friend or foe 
+            sideConst = 1 
+        else:
+            sideConst = -1 
         
-        while True: #top edge
+        
+        while True: #top edge---- first diagonal--downward sloping
             tRow -= 1
             tCol -= 1 
             if tCol < 0 or tCol > 7 or tRow < 0 or tRow > 7:
                 break
 
             tSquare = self.board[tRow][tCol]
+            tSquare *= sideConst
 
             if tSquare != 0:
-                break
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[tRow, tCol]])) # want to add move before breaking if its an enemy  
+                    break
+                else:
+                    break
             moveList.append(move.Move([[row, col],[tRow, tCol]]))
         
         tRow = row
@@ -171,13 +182,19 @@ class Board:
         while True: #bottom edge
             tRow += 1
             tCol += 1 
-            if tCol < 0 or tCol > 7 or tRow < 0 or tRow > 7:
+            if tCol < 0 or tCol > 7 or tRow < 0 or tRow > 7:  
                 break
 
             tSquare = self.board[tRow][tCol]
+            tSquare *= sideConst
+
 
             if tSquare != 0:
-                break
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[tRow, tCol]])) # want to add move before breaking if its an enemy  
+                    break
+                else:
+                    break
             moveList.append(move.Move([[row, col],[tRow, tCol]]))
 
         #second diagonal -- upward sloping 
@@ -191,9 +208,14 @@ class Board:
                 break
 
             tSquare = self.board[tRow][tCol]
+            tSquare *= sideConst
 
             if tSquare != 0:
-                break
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[tRow, tCol]])) # want to add move before breaking if its an enemy  
+                    break
+                else:
+                    break
             moveList.append(move.Move([[row, col],[tRow, tCol]]))
 
         tRow = row
@@ -204,18 +226,29 @@ class Board:
             tCol -= 1 
             if tCol < 0 or tCol > 7 or tRow < 0 or tRow > 7:
                 break
-
+            
+            
             tSquare = self.board[tRow][tCol]
+            tSquare *= sideConst
 
             if tSquare != 0:
-                break
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[tRow, tCol]])) # want to add move before breaking if its an enemy  
+                    break
+                else:
+                    break
             moveList.append(move.Move([[row, col],[tRow, tCol]]))
         
         return moveList
-    def checkCross(self, row, col):
+    def checkCross(self, row, col): #TODO allow taking of enmy pieces 
         moveList = []
         tRow = row
         tCol = col
+
+        if self.nextTurn == WHITE: # sideConst is used when determining which pieces are friend or foe 
+            sideConst = 1 
+        else:
+            sideConst = -1 
 
         # need to check vertical and horizontal lines 
 
@@ -224,30 +257,32 @@ class Board:
             if tRow < 0 or tRow > 7:
                 break
             tSquare = self.board[tRow][tCol]
+            tSquare *= sideConst
+
             if tSquare != 0:
-                break
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[tRow, tCol]]))
+                    break
+                else: 
+                    break
             moveList.append(move.Move([[row, col],[tRow, tCol]]))
 
         tRow = row
         tCol = col
-        while True: #vertical first -- vert bottom
+        while True: # vert bottom
             tRow += 1
             if tRow < 0 or tRow > 7:
                 break
             tSquare = self.board[tRow][tCol]
-            if tSquare != 0:
-                break
-            moveList.append(move.Move([[row, col],[tRow, tCol]]))
+            tSquare *= sideConst
 
-        tRow = row
-        tCol = col
-        while True: #-- vert top
-            tRow -= 1
-            if tRow < 0 or tRow > 7:
-                break
-            tSquare = self.board[tRow][tCol]
+
             if tSquare != 0:
-                break
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[tRow, tCol]]))
+                    break
+                else: 
+                    break
             moveList.append(move.Move([[row, col],[tRow, tCol]]))
 
         tRow = row
@@ -257,16 +292,22 @@ class Board:
             if tCol < 0 or tCol > 7: #TODO  optimize these checking methods to only check necessary bounds
                 break
             tSquare = self.board[tRow][tCol]
-            if tSquare != 0:
-                break
-            moveList.append(move.Move([[row, col],[tRow, tCol]]))
+            tSquare *= sideConst
 
+
+            if tSquare != 0:
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[tRow, tCol]]))
+                    break
+                else: 
+                    break
+            moveList.append(move.Move([[row, col],[tRow, tCol]]))
         
         tRow = row
         tCol = col
         while True: #-- horiz right
             tCol += 1
-            if tCol < 0 or tCol > 7: #TODO  optimize these checking methods to only check necessary bounds
+            if tCol < 0 or tCol > 7: 
                 break
             tSquare = self.board[tRow][tCol]
             if tSquare != 0:
@@ -277,9 +318,6 @@ class Board:
 
     def checkCheck(self, row, col):
         print()
-
-
-
 
 
 #TODO make some test boards 
@@ -295,8 +333,6 @@ if __name__ == "__main__":
                     [0, 0, 0, 0, 0, 0, 0, 0],                                             
                     [0, 0, 0, 0, 0, 0, 0, 0],]
     
-
-
     testBoard = Board(WHITE, False)
     testBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
@@ -306,44 +342,39 @@ if __name__ == "__main__":
                     [0, 0, p, 0, p, 0, 0, 0],                                           
                     [0, 0, 0, P, 0, 0, 0, 0],                                             
                     [0, 0, 0, 0, 0, 0, 0, 0],]
-
-
-    testList = testBoard.getPawnMoves(6, 3)
-
-    printMoveList(testList)
-    #testList = newBoard.checkDiag(4, 3)
-
-    testBoard.printBoard()
     
+    diagBoard = Board(WHITE, False)
+    diagBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, P, 0, 0, 0, p, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, Q, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                             
+                    [0, 0, 0, 0, 0, 0, 0, 0],]
 
-    #testList1 = newBoard.checkCross(4, 3)
+    horizBoard = Board(WHITE, False)
+    horizBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, P, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, R, 0, 0, p, 0],                                         
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, p, 0, 0, 0, 0],                                             
+                    [0, 0, 0, 0, 0, 0, 0, 0],]
 
 
+
+
+
+
+    horizList = horizBoard.checkCross(4,3)
+    testList = diagBoard.checkDiag(4,3)
 
 
     #printMoveList(testList)
-
-    #print("for cross:")
-
-
-    #printMoveList(testList1)
-
-    #queenList = newBoard.getQueenMoves(4, 3)
-
-    #print("for queen:")
-
-    #printMoveList(queenList)
-
-    
-    #newBoard.printBoard()
-
-
-
+    printMoveList(horizList)
     
 
-
-
-
-        
-
+    horizBoard.printBoard()
 

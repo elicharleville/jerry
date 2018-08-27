@@ -138,9 +138,6 @@ class Move:
             self.coordSet = move
             self.mString = coordsToMove(self.coordSet)
 
-    #TODO  allow object to be constructed from coordinate set
-
-
     def printMove(self): # prints the move
         print(self.mString)
 
