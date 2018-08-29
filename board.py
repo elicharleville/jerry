@@ -1,4 +1,6 @@
 #import numpy #prolly not needed
+#git pull https://github.com/elicharleville/jerry.git
+#git push -u origin master
 from enum import Enum
 from pprint import pprint
 import move
@@ -137,13 +139,56 @@ class Board:
     def getRookMoves(self, row, col):
         moveList = self.checkCross(row, col)
         return moveList
+    def getKingMoves(self, row, col): #TODO if a move puts the king in check, its illegal
+        moveList = []
+
+        if self.nextTurn == WHITE: # sideConst is used when determining which pieces are friend or foe 
+            sideConst = 1 
+        else:
+            sideConst = -1 
+
+        tSquare = self.board[row - 1][col]
+        tSquare *= sideConst
+
+        if tSquare != 0:
+            if tSquare < 0:
+                moveList.append(move.Move([[row, col],[row - 1, col]]))
+        elif tSquare == 0: 
+            moveList.append(move.Move([[row, col],[row - 1, col]]))
+
+        tSquare = self.board[row - 1][col]
+        tSquare *= sideConst
+
+        if tSquare != 0:
+            if tSquare < 0:
+                moveList.append(move.Move([[row, col],[row , col - 1]]))
+        elif tSquare == 0: 
+            moveList.append(move.Move([[row, col],[row , col - 1]]))
+
+        tSquare = self.board[row - 1][col]
+        tSquare *= sideConst
+        
+        if self.board[row - 1][col] != 0:
+            if tSquare < 0:
+                moveList.append(move.Move([[row, col],[row - 1, col]]))
+        elif tSquare == 0: 
+            moveList.append(move.Move([[row, col],[row - 1, col]]))
+
+        tSquare = self.board[row - 1][col]
+        tSquare *= sideConst
+        
+        if tSquare != 0:
+            if tSquare < 0:
+                moveList.append(move.Move([[row, col],[row - 1, col]]))
+        elif tSquare == 0: 
+            moveList.append(move.Move([[row, col],[row - 1, col]]))
+
+        return moveList
     def getQueenMoves(self, row, col):
         diagList = self.checkDiag(row, col)
         crossList = self.checkCross(row, col)
         moveList = diagList + crossList
         return moveList 
-    def getKingMoves(self, row, col):
-        print()
     def checkDiag(self, row, col): #returns list of moves
         # need to check both diagonal
         # ultimately, both loops put moves into the returning list 
