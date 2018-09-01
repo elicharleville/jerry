@@ -38,6 +38,14 @@ def printMoveList(moveList):
     for i in moveList:
         print(i.mString)
 
+
+
+def inBound(row, col):
+    if row < 8 and row >= 0 and col < 8 and col >= 0:
+        return True
+    else: 
+        return False
+
 class Board:
     def __init__(self, nextTurn, check, board = None):
         #from move import Move
@@ -169,62 +177,85 @@ class Board:
         else:
             sideConst = -1 
 
+        inB = inBound(row - 1, col)
+
+
         tSquare = self.board[row - 1][col] * sideConst
-        if tSquare != 0:
-            if tSquare < 0:
-                moveList.append(move.Move([[row, col],[row - 1, col]])) # top
-        elif tSquare == 0: 
-            moveList.append(move.Move([[row, col],[row - 1, col]]))
+        if inB:
+            if tSquare != 0 and inB:
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[row - 1, col]])) # top
+            elif tSquare == 0: 
+                moveList.append(move.Move([[row, col],[row - 1, col]]))
+
+
+        inB = inBound(row, col - 1)
 
         tSquare = self.board[row][col - 1] * sideConst
-        if tSquare != 0:
-            if tSquare < 0:
-                moveList.append(move.Move([[row, col],[row , col - 1]])) #left
-        elif tSquare == 0: 
-            moveList.append(move.Move([[row, col],[row , col - 1]]))
+        if inB:
+            if tSquare != 0:
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[row , col - 1]])) #left
+            elif tSquare == 0: 
+                moveList.append(move.Move([[row, col],[row , col - 1]]))
+        
 
+
+        inB = inBound(row + 1, col)
         tSquare = self.board[row + 1][col] * sideConst
-        if self.board[row + 1][col] != 0:
-            if tSquare < 0:
-                moveList.append(move.Move([[row, col],[row + 1, col]])) #down 
-        elif tSquare == 0: 
-            moveList.append(move.Move([[row, col],[row + 1, col]]))
+        if inB:
+            if self.board[row + 1][col] != 0:
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[row + 1, col]])) #down 
+            elif tSquare == 0: 
+                moveList.append(move.Move([[row, col],[row + 1, col]]))
 
+
+        inB = inBound(row, col + 1)
         tSquare = self.board[row][col + 1] * sideConst
-        if tSquare != 0:
-            if tSquare < 0:
-                moveList.append(move.Move([[row, col],[row , col + 1]])) #right 
-        elif tSquare == 0: 
-            moveList.append(move.Move([[row, col],[row , col + 1]]))
+        if inB:
+            if tSquare != 0:
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[row , col + 1]])) #right 
+            elif tSquare == 0: 
+                moveList.append(move.Move([[row, col],[row , col + 1]]))
 
+
+        inB = inBound(row - 1, col + 1)
         tSquare = self.board[row - 1][col + 1] * sideConst
-        if tSquare != 0:
-            if tSquare < 0:
-                moveList.append(move.Move([[row, col],[row - 1, col + 1]])) #top right diag
-        elif tSquare == 0: 
-            moveList.append(move.Move([[row, col],[row - 1, col + 1]])) 
+        if inB:
+            if tSquare != 0:
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[row - 1, col + 1]])) #top right diag
+            elif tSquare == 0: 
+                moveList.append(move.Move([[row, col],[row - 1, col + 1]]))
 
+        inB = inBound(row - 1, col + 1)
         tSquare = self.board[row - 1][col - 1] * sideConst
-        if tSquare != 0:
-            if tSquare < 0:
-                moveList.append(move.Move([[row, col],[row - 1, col - 1]])) #top left diag
-        elif tSquare == 0: 
-            moveList.append(move.Move([[row, col],[row - 1, col - 1]])) 
+        if inB:
+            if tSquare != 0:
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[row - 1, col - 1]])) #top left diag
+            elif tSquare == 0: 
+                moveList.append(move.Move([[row, col],[row - 1, col - 1]])) 
 
-       
+        inB = inBound(row + 1, col - 1)
         tSquare = self.board[row + 1][col - 1] * sideConst
-        if tSquare != 0:
-            if tSquare < 0:
-                moveList.append(move.Move([[row, col],[row + 1, col - 1]])) #bottom left diag
-        elif tSquare == 0: 
-            moveList.append(move.Move([[row, col],[row + 1, col - 1]]))
+        if inB:
+            if tSquare != 0:
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[row + 1, col - 1]])) #bottom left diag
+            elif tSquare == 0: 
+                moveList.append(move.Move([[row, col],[row + 1, col - 1]]))
 
+        inB = inBound(row - 1, col + 1)
         tSquare = self.board[row + 1][col + 1] * sideConst
-        if tSquare != 0:
-            if tSquare < 0:
-                moveList.append(move.Move([[row, col],[row + 1, col + 1]])) #bottom right diag
-        elif tSquare == 0: 
-            moveList.append(move.Move([[row, col],[row + 1, col + 1]]))
+        if inB:
+            if tSquare != 0:
+                if tSquare < 0:
+                    moveList.append(move.Move([[row, col],[row + 1, col + 1]])) #bottom right diag
+            elif tSquare == 0: 
+                moveList.append(move.Move([[row, col],[row + 1, col + 1]]))
         
         return moveList
 
