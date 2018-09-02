@@ -118,7 +118,9 @@ class Board:
                         moveList += self.getPawnMoves(row, col)
                     elif tSquare == 2:
                         moveList += self.getbishopMoves(row, col)
-                    elif tSquare == 4: #TODO add case for knight
+                    elif tSquare == 3:
+                        moveList += self.getKnightMoves(row, col)
+                    elif tSquare == 4: 
                         moveList += self.getRookMoves(row, col)
                     elif tSquare == 5: 
                         moveList += self.getQueenMoves(row, col)
@@ -127,9 +129,11 @@ class Board:
 
         return moveList
         
-    def getPawnMoves(self, row, col): 
+    def getPawnMoves(self, row, col): #TODO Promotions
         #1. check if pawn is in starting positon based on what side its on
         #2. if so, give ability to move up two squares
+
+        #TODO add cases for pawns on edge of board
         moveList = []
         if self.nextTurn == WHITE:
             # handle checking for double jumping for pawn--WHITE
@@ -145,7 +149,7 @@ class Board:
             if self.board[row - 1][col + 1] < 0:
                 moveList.append(move.Move([[row, col],[row - 1, col + 1]]))
             
-        else: #BLACK
+        else: #BLACK TODO add sideConst method to this
             if self.board[row + 1][col] == 0: 
                 moveList.append(move.Move([[row, col],[row + 1, col]]))
             if row == 1: 
@@ -163,100 +167,48 @@ class Board:
         moveList = self.checkDiag(row,col)
         return moveList
 
-    def getKnightMoves(self, row, col):
-        print()
-    def getRookMoves(self, row, col):
-        moveList = self.checkCross(row, col)
-        return moveList
-    def getKingMoves(self, row, col): #TODO if a move puts the king in check, its illegal
-        #TODO moves off the board should not be attempted to access 
+    def getKnightMoves(self, row, col): 
+        #check all eight possible squares
         moveList = []
 
-        if self.nextTurn == WHITE: # sideConst is used when determining which pieces are friend or foe 
+        if self.nextTurn == WHITE: 
             sideConst = 1 
         else:
             sideConst = -1 
 
-        inB = inBound(row - 1, col)
+        #going clockwise starting with top right . . .
 
+        rowAdd = [-2, -1, 1, 2, 2, 1, -1, -2]
+        colAdd = [1, 2, 2, 1, -1, -2, -2, -1]
 
-        tSquare = self.board[row - 1][col] * sideConst
-        if inB:
-            if tSquare != 0 and inB:
-                if tSquare < 0:
-                    moveList.append(move.Move([[row, col],[row - 1, col]])) # top
-            elif tSquare == 0: 
-                moveList.append(move.Move([[row, col],[row - 1, col]]))
+        for i in range (0,8):
+            inB = inBound(row + rowAdd[i], col + colAdd[i]) 
+            if inB: 
+                tSquare = self.board[row + rowAdd[i]][col + colAdd[i]] * sideConst
+                if tSquare <= 0:
+                    moveList.append(move.Move([[row, col],[row + rowAdd[i], col + colAdd[i]]]))
 
-
-        inB = inBound(row, col - 1)
-
-        tSquare = self.board[row][col - 1] * sideConst
-        if inB:
-            if tSquare != 0:
-                if tSquare < 0:
-                    moveList.append(move.Move([[row, col],[row , col - 1]])) #left
-            elif tSquare == 0: 
-                moveList.append(move.Move([[row, col],[row , col - 1]]))
+        return moveList
         
-
-
-        inB = inBound(row + 1, col)
-        tSquare = self.board[row + 1][col] * sideConst
-        if inB:
-            if self.board[row + 1][col] != 0:
-                if tSquare < 0:
-                    moveList.append(move.Move([[row, col],[row + 1, col]])) #down 
-            elif tSquare == 0: 
-                moveList.append(move.Move([[row, col],[row + 1, col]]))
-
-
-        inB = inBound(row, col + 1)
-        tSquare = self.board[row][col + 1] * sideConst
-        if inB:
-            if tSquare != 0:
-                if tSquare < 0:
-                    moveList.append(move.Move([[row, col],[row , col + 1]])) #right 
-            elif tSquare == 0: 
-                moveList.append(move.Move([[row, col],[row , col + 1]]))
-
-
-        inB = inBound(row - 1, col + 1)
-        tSquare = self.board[row - 1][col + 1] * sideConst
-        if inB:
-            if tSquare != 0:
-                if tSquare < 0:
-                    moveList.append(move.Move([[row, col],[row - 1, col + 1]])) #top right diag
-            elif tSquare == 0: 
-                moveList.append(move.Move([[row, col],[row - 1, col + 1]]))
-
-        inB = inBound(row - 1, col + 1)
-        tSquare = self.board[row - 1][col - 1] * sideConst
-        if inB:
-            if tSquare != 0:
-                if tSquare < 0:
-                    moveList.append(move.Move([[row, col],[row - 1, col - 1]])) #top left diag
-            elif tSquare == 0: 
-                moveList.append(move.Move([[row, col],[row - 1, col - 1]])) 
-
-        inB = inBound(row + 1, col - 1)
-        tSquare = self.board[row + 1][col - 1] * sideConst
-        if inB:
-            if tSquare != 0:
-                if tSquare < 0:
-                    moveList.append(move.Move([[row, col],[row + 1, col - 1]])) #bottom left diag
-            elif tSquare == 0: 
-                moveList.append(move.Move([[row, col],[row + 1, col - 1]]))
-
-        inB = inBound(row - 1, col + 1)
-        tSquare = self.board[row + 1][col + 1] * sideConst
-        if inB:
-            if tSquare != 0:
-                if tSquare < 0:
-                    moveList.append(move.Move([[row, col],[row + 1, col + 1]])) #bottom right diag
-            elif tSquare == 0: 
-                moveList.append(move.Move([[row, col],[row + 1, col + 1]]))
+    def getRookMoves(self, row, col):
+        moveList = self.checkCross(row, col)
+        return moveList
+    def getKingMoves(self, row, col): #TODO if a move puts the king in check, its illegal
         
+        moveList = []
+        if self.nextTurn == WHITE: 
+            sideConst = 1 
+        else:
+            sideConst = -1 
+        rowAdd = [-1, 0, 1, 0, -1, -1, +1, -1]
+        colAdd = [0, -1, 0, 1, 1, 1, -1, 1]
+
+        for i in range(0, 8):
+            inB = inBound(row + rowAdd[i], col + colAdd[i])
+            if inB:
+                tSquare = self.board[row + rowAdd[i]][col + colAdd[i]] * sideConst
+                if tSquare <= 0:
+                    moveList.append(move.Move([[row, col],[row + rowAdd[i], col + colAdd[i]]])) 
         return moveList
 
 
@@ -274,7 +226,7 @@ class Board:
         tCol = col 
 
 
-        if self.nextTurn == WHITE: # sideConst is used when determining which pieces are friend or foe 
+        if self.nextTurn == WHITE: 
             sideConst = 1 
         else:
             sideConst = -1 
@@ -291,7 +243,7 @@ class Board:
 
             if tSquare != 0:
                 if tSquare < 0:
-                    moveList.append(move.Move([[row, col],[tRow, tCol]])) # want to add move before breaking if its an enemy  
+                    moveList.append(move.Move([[row, col],[tRow, tCol]])) 
                     break
                 else:
                     break
@@ -312,7 +264,7 @@ class Board:
 
             if tSquare != 0:
                 if tSquare < 0:
-                    moveList.append(move.Move([[row, col],[tRow, tCol]])) # want to add move before breaking if its an enemy  
+                    moveList.append(move.Move([[row, col],[tRow, tCol]]))  
                     break
                 else:
                     break
@@ -354,7 +306,7 @@ class Board:
 
             if tSquare != 0:
                 if tSquare < 0:
-                    moveList.append(move.Move([[row, col],[tRow, tCol]])) # want to add move before breaking if its an enemy  
+                    moveList.append(move.Move([[row, col],[tRow, tCol]])) 
                     break
                 else:
                     break
@@ -482,31 +434,35 @@ if __name__ == "__main__":
                     [0, 0, 0, p, 0, 0, 0, 0],                                             
                     [0, 0, 0, 0, 0, 0, 0, 0],]
 
-    kingBoard = Board(BLACK, False)
-    kingBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
+    knightBoard = Board(WHITE, False)
+    knightBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
                     [0, 0, 0, p, p, 0, 0, 0],                                           
-                    [0, 0, 0, k, 0, 0, 0, 0],                                         
+                    [0, 0, 0, N, 0, 0, 0, 0],                                         
                     [0, 0, 0, 0, P, 0, 0, 0],                                           
                     [0, 0, 0, 0, 0, 0, 0, 0],                                             
                     [0, 0, 0, 0, 0, 0, 0, 0],]
+    
 
 
+    finalBoard = Board(WHITE, False)
 
+    finalList = finalBoard.getLegalMoves()
 
+    printMoveList(finalList)
 
-    horizList = horizBoard.checkCross(4,3)
-    testList = diagBoard.checkDiag(4,3)
+    #horizList = horizBoard.checkCross(4,3)
+    #testList = diagBoard.checkDiag(4,3)
 
-    kingList = kingBoard.getKingMoves(4, 3)
+    #knightList = knightBoard.getKnightMoves(4, 3)
 
-    printMoveList(kingList)
+    #printMoveList(knightList)
 
 
     #printMoveList(testList)
     #printMoveList(horizList)
     
 
-    kingBoard.printBoard()
+    finalBoard.printBoard()
 
