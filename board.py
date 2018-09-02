@@ -102,10 +102,14 @@ class Board:
         print()
         print("   a b c d e f g h")
 
-    def getLegalMoves(self): #return list of moves
+    def getLegalMoves(self, nextTurn): #return list of moves
         moveList = []
 
-        if self.nextTurn == WHITE:  
+        prevTurn = self.nextTurn # want to temporarily switch the next turn so that the getMove methods behave correctly
+        self.nextTurn = nextTurn
+
+
+        if nextTurn == WHITE:  
             sideConst = 1 
         else:
             sideConst = -1 
@@ -127,13 +131,12 @@ class Board:
                     elif tSquare == 6:
                         moveList += self.getKingMoves(row, col)
 
+        self.nextTurn = prevTurn # aaaand we switch back 
         return moveList
         
     def getPawnMoves(self, row, col): #TODO Promotions
         #1. check if pawn is in starting positon based on what side its on
         #2. if so, give ability to move up two squares
-
-        #TODO add cases for pawns on edge of board
         moveList = []
         if self.nextTurn == WHITE:
             # handle checking for double jumping for pawn--WHITE
@@ -144,10 +147,12 @@ class Board:
                     moveList.append(move.Move([[row, col],[row - 2, col]]))
 
             # checking if black pieces are in immediate diag
-            if self.board[row - 1][col - 1] < 0:
-                moveList.append(move.Move([[row, col],[row - 1, col -1]]))
-            if self.board[row - 1][col + 1] < 0:
-                moveList.append(move.Move([[row, col],[row - 1, col + 1]]))
+            if col > 0:
+                if self.board[row - 1][col - 1] < 0:
+                    moveList.append(move.Move([[row, col],[row - 1, col -1]]))
+            if col < 7:
+                if self.board[row - 1][col + 1] < 0:
+                    moveList.append(move.Move([[row, col],[row - 1, col + 1]]))
             
         else: #BLACK TODO add sideConst method to this
             if self.board[row + 1][col] == 0: 
@@ -157,10 +162,12 @@ class Board:
                     moveList.append(move.Move([[row, col],[row + 2, col]]))
 
             # checking if white pieces are in imediate diag
-            if self.board[row + 1][col - 1] > 0:
-                moveList.append(move.Move([[row, col],[row + 1, col - 1]]))
-            if self.board[row + 1][col + 1] > 0:
-                moveList.append(move.Move([[row, col],[row + 1, col + 1]]))
+            if col > 0:
+                if self.board[row + 1][col - 1] > 0:
+                    moveList.append(move.Move([[row, col],[row + 1, col - 1]]))
+            if col < 7:
+                if self.board[row + 1][col + 1] > 0:
+                    moveList.append(move.Move([[row, col],[row + 1, col + 1]]))
         return moveList
   
     def getbishopMoves(self, row, col):
@@ -390,79 +397,35 @@ class Board:
         return moveList
 
     def checkCheck(self, row, col):
-        print()
+        check = False
+
+        if self.nextTurn == WHITE:
+            oppList = self.getLegalMoves(BLACK)
+        else: 
+            oppList = self.getLegalMoves(WHITE)
+        
+
+        for move in oppList:
+            if move.coordSet[1] == [row, col]:
+                check = True
+                break
+        return check
+
+
+
+        
 
 #test code/ main
 if __name__ == "__main__":
     newBoard = Board(WHITE, False)
     newBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, K, 0, 0],                                           
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, Q, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                             
-                    [0, 0, 0, 0, 0, 0, 0, 0],]
-    
-    testBoard = Board(WHITE, False)
-    testBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, p, 0, p, 0, 0, 0],                                           
-                    [0, 0, 0, P, 0, 0, 0, 0],                                             
-                    [0, 0, 0, 0, 0, 0, 0, 0],]
-    
-    diagBoard = Board(WHITE, False)
-    diagBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, P, 0, 0, 0, p, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, Q, 0, 0, 0, 0],                                           
+                    [0, 0, 0, q, 0, 0, 0, 0],                                           
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
                     [0, 0, 0, 0, 0, 0, 0, 0],                                             
                     [0, 0, 0, 0, 0, 0, 0, 0],]
-
-    horizBoard = Board(WHITE, False)
-    horizBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, P, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, R, 0, 0, p, 0],                                         
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, p, 0, 0, 0, 0],                                             
-                    [0, 0, 0, 0, 0, 0, 0, 0],]
-
-    knightBoard = Board(WHITE, False)
-    knightBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, p, p, 0, 0, 0],                                           
-                    [0, 0, 0, N, 0, 0, 0, 0],                                         
-                    [0, 0, 0, 0, P, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                             
-                    [0, 0, 0, 0, 0, 0, 0, 0],]
-    
-
-
-    finalBoard = Board(WHITE, False)
-
-    finalList = finalBoard.getLegalMoves()
-
-    printMoveList(finalList)
-
-    #horizList = horizBoard.checkCross(4,3)
-    #testList = diagBoard.checkDiag(4,3)
-
-    #knightList = knightBoard.getKnightMoves(4, 3)
-
-    #printMoveList(knightList)
-
-
-    #printMoveList(testList)
-    #printMoveList(horizList)
-    
-
-    finalBoard.printBoard()
+    newBoard.printBoard()
+    print(newBoard.checkCheck(2,5))
 
