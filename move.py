@@ -21,24 +21,6 @@ def moveToCoords(mString): # converts string to list coordinate
 
     return coordSet
 
-def coordsToMove(coord): # converts a given coordinate list to a7b7 etc. 
-    #coord1 = coord[0] 
-    #coord2 = coord[1]
-    #ex: [[4, 3], [2, 3]]
-    char1 = numToLetter(coord[0][1])
-    char2 = numToLetter(coord[1][1])
-
-    num1 = coord[0][0]
-    num2 = coord[1][0]
-
-
-    num1 = 8 - num1
-    num2 = 8 - num2
-
-    mString = char1 + str(num1) + char2 + str(num2) 
-
-    return mString 
-
 def numToLetter(num):
     if num == 0:
         return 'a'
@@ -124,32 +106,58 @@ def strToCoords(cString): #helper method to
 def retBoardMove(mString): # just combines the above code 
     coordSet = moveToCoords(mString)
     coordSet = boardAdjust(coordSet)
+
     return coordSet
 
-    
 
 class Move:
-    #import board
-    def __init__(self, move):
+    def __init__(self, move, promote=None):
+        self.promotion = False
         if isinstance(move, str):
             self.mString = move
             self.coordSet = retBoardMove(self.mString)
         elif isinstance(move, list):
             self.coordSet = move
-            self.mString = coordsToMove(self.coordSet)
+            self.mString = self.coordsToMove()
+        if promote is None:
+            self.promotion = False
+        else:
+            self.promotion = promote
 
-    def printMove(self): # prints the move
+    def printMove(self):  # prints the move
         print(self.mString)
 
+    def promote(self):  # sets the promotion bool to true
+        self.promotion = True
+
+    def coordsToMove(self):
+        #coord1 = coord[0]
+        #coord2 = coord[1]
+        #ex: [[4, 3], [2, 3]]
+        char1 = numToLetter(self.coordSet[0][1])
+        char2 = numToLetter(self.coordSet[1][1])
+
+        num1 = self.coordSet[0][0]
+        num2 = self.coordSet[1][0]
+
+        num1 = 8 - num1
+        num2 = 8 - num2
+
+        mString = char1 + str(num1) + char2 + str(num2)
+
+        if self.promotion == True:
+            mString += " --> Q"
+            return mString
+        else:
+            return mString
 
 if __name__ == "__main__":
     #move = Move("e2e4")
     #move.printMove()
 
     coordSet = retBoardMove("b7d5")
-    move = Move(coordSet)
+
+    move = Move(coordSet, True)
+
+    print(move.promotion)
     print(move.coordSet)
-
-    coordStr = coordsToMove(coordSet)
-    print(coordStr)
-

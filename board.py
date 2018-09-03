@@ -139,22 +139,33 @@ class Board:
         #2. if so, give ability to move up two squares
         moveList = []
         if self.nextTurn == WHITE:
-            # handle checking for double jumping for pawn--WHITE
+
+            # check if this is a promotion move
+            if row == 1: promotion = True
+            else: promotion = False
+
+            
             if self.board[row - 1][col] == 0: 
-                moveList.append(move.Move([[row, col],[row - 1, col]]))
-            if row == 6:    
+                moveList.append(move.Move([[row, col],[row - 1, col]], promotion))
+            if row == 6: # handle checking for double jumping for pawn--WHITE
                 if self.board[row - 2][col] == 0: 
                     moveList.append(move.Move([[row, col],[row - 2, col]]))
 
             # checking if black pieces are in immediate diag
             if col > 0:
                 if self.board[row - 1][col - 1] < 0:
-                    moveList.append(move.Move([[row, col],[row - 1, col -1]]))
+                    moveList.append(move.Move([[row, col],[row - 1, col -1]], promotion))
             if col < 7:
                 if self.board[row - 1][col + 1] < 0:
-                    moveList.append(move.Move([[row, col],[row - 1, col + 1]]))
+                    moveList.append(move.Move([[row, col],[row - 1, col + 1]], promotion))
+
             
         else: #BLACK TODO add sideConst method to this
+
+            # check if this is a promotion move
+            if row == 6: promotion = True
+            else: promotion = False
+
             if self.board[row + 1][col] == 0: 
                 moveList.append(move.Move([[row, col],[row + 1, col]]))
             if row == 1: 
@@ -164,10 +175,10 @@ class Board:
             # checking if white pieces are in imediate diag
             if col > 0:
                 if self.board[row + 1][col - 1] > 0:
-                    moveList.append(move.Move([[row, col],[row + 1, col - 1]]))
+                    moveList.append(move.Move([[row, col],[row + 1, col - 1]], promotion))
             if col < 7:
                 if self.board[row + 1][col + 1] > 0:
-                    moveList.append(move.Move([[row, col],[row + 1, col + 1]]))
+                    moveList.append(move.Move([[row, col],[row + 1, col + 1]], promotion))
         return moveList
   
     def getbishopMoves(self, row, col):
@@ -200,21 +211,18 @@ class Board:
     def getRookMoves(self, row, col):
         moveList = self.checkCross(row, col)
         return moveList
-    def getKingMoves(self, row, col): #TODO if a move puts the king in check, its illegal
+    def getKingMoves(self, row, col):
         
         moveList = []
-        if self.nextTurn == WHITE: 
-            sideConst = 1 
-        else:
-            sideConst = -1 
         rowAdd = [-1, 0, 1, 0, -1, -1, +1, -1]
         colAdd = [0, -1, 0, 1, 1, 1, -1, 1]
 
         for i in range(0, 8):
             inB = inBound(row + rowAdd[i], col + colAdd[i])
             if inB:
-                tSquare = self.board[row + rowAdd[i]][col + colAdd[i]] * sideConst
-                if tSquare <= 0:
+                check = self.checkCheck(row + rowAdd[i], col+colAdd[i]) #need to check if this move puts me in check
+                tSquare = self.board[row + rowAdd[i]][col + colAdd[i]] * self.nextTurn
+                if tSquare <= 0 and not check:
                     moveList.append(move.Move([[row, col],[row + rowAdd[i], col + colAdd[i]]])) 
         return moveList
 
@@ -404,7 +412,6 @@ class Board:
         else: 
             oppList = self.getLegalMoves(WHITE)
         
-
         for move in oppList:
             if move.coordSet[1] == [row, col]:
                 check = True
@@ -424,8 +431,10 @@ if __name__ == "__main__":
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
                     [0, 0, 0, q, 0, 0, 0, 0],                                           
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                             
+                    [0, 0, 0, 0, 0, 0, r, 0],                                             
                     [0, 0, 0, 0, 0, 0, 0, 0],]
     newBoard.printBoard()
-    print(newBoard.checkCheck(2,5))
+    kingsList = newBoard.getKingMoves(2,5)
+    printMoveList(kingsList)
+    #print(newBoard.checkCheck(2,5))
 
