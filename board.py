@@ -1,6 +1,6 @@
 #git pull https://github.com/elicharleville/jerry.git
 #git push -u origin master
-from enum import Enum
+#from enum import Enum
 from pprint import pprint
 import move
 
@@ -47,10 +47,11 @@ def inBound(row, col):
         return False
 
 class Board:
-    def __init__(self, nextTurn, check, board = None):
+    def __init__(self, nextTurn, check = None, board = None):
         #from move import Move
-        self.nextTurn = nextTurn  
-        self.check = check 
+        self.nextTurn = nextTurn
+        if check is None: self.check = False
+        else: self.check = check 
         if board is None:
             self.board = [[r, n, b, q, k, b, n, r],                                           
                         [p, p, p, p, p, p, p, p],                                           

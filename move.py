@@ -1,4 +1,4 @@
-from __future__ import division
+#from __future__ import division
 # moves will be composed of one string
 # string is parsed to find out what it does
 
@@ -119,10 +119,9 @@ class Move:
         elif isinstance(move, list):
             self.coordSet = move
             self.mString = self.coordsToMove()
-        if promote is None:
-            self.promotion = False
-        else:
-            self.promotion = promote
+        if promote is None: self.promotion = False
+        else: self.promotion = promote
+            
 
     def printMove(self):  # prints the move
         print(self.mString)
@@ -152,8 +151,6 @@ class Move:
             return mString
 
 if __name__ == "__main__":
-    #move = Move("e2e4")
-    #move.printMove()
 
     coordSet = retBoardMove("b7d5")
 
