@@ -63,7 +63,7 @@ class Board:
                         [R, N, B, Q, K, B, N, R]]
         else:
             self.board = board 
-        self.moveList = self.getLegalMoves(self.nextTurn) #TODO this can be cleaned up
+        self.moveList = self.legalMoves(self.nextTurn, True) #TODO this can be cleaned up
         self.numMoves = len(self.moveList)
         
                   
@@ -105,7 +105,7 @@ class Board:
         print()
         print("   a b c d e f g h")
 
-    def getLegalMoves(self, nextTurn): #return list of moves
+    def legalMoves(self, nextTurn, init): #return list of moves
         moveList = []
 
         prevTurn = self.nextTurn # want to temporarily switch the state of the board object so that the getMove methods behave correctly
@@ -116,22 +116,22 @@ class Board:
                 tSquare = self.board[row][col] * self.nextTurn
                 if tSquare > 0:
                     if tSquare == 1:
-                        moveList += self.getPawnMoves(row, col)
+                        moveList += self.pawnMoves(row, col)
                     elif tSquare == 2:
-                        moveList += self.getbishopMoves(row, col)
+                        moveList += self.bishopMoves(row, col)
                     elif tSquare == 3:
-                        moveList += self.getKnightMoves(row, col)
+                        moveList += self.knightMoves(row, col)
                     elif tSquare == 4: 
-                        moveList += self.getRookMoves(row, col)
+                        moveList += self.rookMoves(row, col)
                     elif tSquare == 5: 
-                        moveList += self.getQueenMoves(row, col)
-                    elif tSquare == 6:
-                        moveList += self.getKingMoves(row, col)
+                        moveList += self.queenMoves(row, col)
+                    elif tSquare == 6: #for kingMoves, need specific parameter
+                        moveList += self.kingMoves(row, col, init)
 
         self.nextTurn = prevTurn # aaaand we switch back 
         return moveList
         
-    def getPawnMoves(self, row, col): #TODO Promotions
+    def pawnMoves(self, row, col): #TODO Promotions
         #1. check if pawn is in starting positon based on what side its on
         #2. if so, give ability to move up two squares
         moveList = []
@@ -178,11 +178,11 @@ class Board:
                     moveList.append(move.Move([[row, col],[row + 1, col + 1]], promotion))
         return moveList
   
-    def getbishopMoves(self, row, col):
+    def bishopMoves(self, row, col):
         moveList = self.checkDiag(row,col)
         return moveList
 
-    def getKnightMoves(self, row, col): 
+    def knightMoves(self, row, col): 
         #check all eight possible squares
         moveList = []
 
@@ -205,27 +205,31 @@ class Board:
 
         return moveList
         
-    def getRookMoves(self, row, col):
+    def rookMoves(self, row, col):
         moveList = self.checkCross(row, col)
         return moveList
        
-    def getKingMoves(self, row, col):
+    def kingMoves(self, row, col, init):
+
+        # if otherKing is false, then normal, else do not run check check
         moveList = []
         rowAdd = [-1, 0, 1, 0, -1, -1, +1, -1]
         colAdd = [0, -1, 0, 1, 1, 1, -1, 1]
 
         for i in range(0, 8):
             inB = inBound(row + rowAdd[i], col + colAdd[i])
+            check = False
             if inB:
-                check = self.checkCheck(row + rowAdd[i], col+colAdd[i]) #need to check if this move puts me in check 
+                if init:
+                    check = self.checkCheck(row + rowAdd[i], col+colAdd[i]) #need to check if this move puts me in check 
                 tSquare = self.board[row + rowAdd[i]][col + colAdd[i]] * self.nextTurn
                 if tSquare <= 0 and not check:
                     moveList.append(move.Move([[row, col],[row + rowAdd[i], col + colAdd[i]]])) 
         return moveList
 
 
-    def getQueenMoves(self, row, col):
-        diagList = self.checkDiag(row, col)
+    def queenMoves(self, row, col):
+        diagList = self.checkDiag(row, col) 
         crossList = self.checkCross(row, col)
         moveList = diagList + crossList
         return moveList 
@@ -402,24 +406,19 @@ class Board:
         return moveList
 
     def checkCheck(self, row, col):
-        check = False
+       #  check = False  
 
-        if self.nextTurn == WHITE:
-            oppList = self.getLegalMoves(BLACK)
-        else: 
-            oppList = self.getLegalMoves(WHITE)
+        oppList = self.legalMoves(self.nextTurn * -1, False)
         
         tSquare = self.board[row][col] * self.nextTurn
         if tSquare > 0:
-            return True
+            return True #not technically in check but it is not a legal move
         
         for move in oppList:
             if move.coordSet[1] == [row, col]:
-                check = True
-                break
-        return check
+                return True
     
-    def getPieceCount(self, piece = None):
+    def pieceCount(self, piece = None):
         countArray = [0] * 7 #0th index will be 0 for neatness's sake
         for row in range(0,8):
             for col in range(0,8):
@@ -440,6 +439,9 @@ class Board:
             return countArray
         else:
             return countArray[piece]
+            
+    def moveCount(self):
+        return len(self.moveList)
         
 
                         
@@ -450,14 +452,14 @@ class Board:
 if __name__ == "__main__":
     newBoard = Board(WHITE, False)
     newBoard.printBoard()
-    #kingsList = newBoard.getKingMoves(2,5)
+    #kingsList = newBoard.kingMoves(2,5)
     #printMoveList(kingsList)
 
     
-
-    countList = newBoard.getPieceCount()
-    print(countList)
-
     
+    countList = newBoard.pieceCount()
+    print(countList)
+    printMoveList(newBoard.moveList)
+    print(len(newBoard.moveList))
     #print(newBoard.checkCheck(2,5))
 
