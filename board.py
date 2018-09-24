@@ -439,14 +439,10 @@ class Board:
             return countArray
         else:
             return countArray[piece]
-            
+
     def moveCount(self):
         return len(self.moveList)
         
-
-                        
-            
-
 
 #test code/ main
 if __name__ == "__main__":
