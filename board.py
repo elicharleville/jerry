@@ -63,6 +63,8 @@ class Board:
                         [R, N, B, Q, K, B, N, R]]
         else:
             self.board = board 
+        self.moveList = self.getLegalMoves(self.nextTurn) #TODO this can be cleaned up
+        self.numMoves = len(self.moveList)
         
                   
     #prints the board in graphics mode
@@ -106,18 +108,12 @@ class Board:
     def getLegalMoves(self, nextTurn): #return list of moves
         moveList = []
 
-        prevTurn = self.nextTurn # want to temporarily switch the next turn so that the getMove methods behave correctly
+        prevTurn = self.nextTurn # want to temporarily switch the state of the board object so that the getMove methods behave correctly
         self.nextTurn = nextTurn
-
-
-        if nextTurn == WHITE:  
-            sideConst = 1 
-        else:
-            sideConst = -1 
 
         for row in range(0, 8):
             for col in range(0,8):
-                tSquare = self.board[row][col] * sideConst
+                tSquare = self.board[row][col] * self.nextTurn
                 if tSquare > 0:
                     if tSquare == 1:
                         moveList += self.getPawnMoves(row, col)
@@ -212,8 +208,8 @@ class Board:
     def getRookMoves(self, row, col):
         moveList = self.checkCross(row, col)
         return moveList
+       
     def getKingMoves(self, row, col):
-        
         moveList = []
         rowAdd = [-1, 0, 1, 0, -1, -1, +1, -1]
         colAdd = [0, -1, 0, 1, 1, 1, -1, 1]
@@ -221,7 +217,7 @@ class Board:
         for i in range(0, 8):
             inB = inBound(row + rowAdd[i], col + colAdd[i])
             if inB:
-                check = self.checkCheck(row + rowAdd[i], col+colAdd[i]) #need to check if this move puts me in check
+                check = self.checkCheck(row + rowAdd[i], col+colAdd[i]) #need to check if this move puts me in check 
                 tSquare = self.board[row + rowAdd[i]][col + colAdd[i]] * self.nextTurn
                 if tSquare <= 0 and not check:
                     moveList.append(move.Move([[row, col],[row + rowAdd[i], col + colAdd[i]]])) 
@@ -413,29 +409,55 @@ class Board:
         else: 
             oppList = self.getLegalMoves(WHITE)
         
+        tSquare = self.board[row][col] * self.nextTurn
+        if tSquare > 0:
+            return True
+        
         for move in oppList:
             if move.coordSet[1] == [row, col]:
                 check = True
                 break
         return check
-
-
-
+    
+    def getPieceCount(self, piece = None):
+        countArray = [0] * 7 #0th index will be 0 for neatness's sake
+        for row in range(0,8):
+            for col in range(0,8):
+                tSquare = self.board[row][col] * self.nextTurn #whatever side has the next turn gets its pieces counted 
+                if tSquare == P:
+                    countArray[P] += 1
+                elif tSquare == B:
+                    countArray[B] += 1 
+                elif tSquare == N:
+                    countArray[N] += 1 
+                elif tSquare == R:
+                    countArray[R] += 1 
+                elif tSquare == Q:
+                    countArray[Q] += 1 
+                elif tSquare == K:
+                    countArray[K] += 1 
+        if piece is None:
+            return countArray
+        else:
+            return countArray[piece]
         
+
+                        
+            
+
 
 #test code/ main
 if __name__ == "__main__":
     newBoard = Board(WHITE, False)
-    newBoard.board = [[0, 0, 0, 0, 0, 0, 0, 0],  
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, K, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, q, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, 0, r, 0],                                             
-                    [0, 0, 0, 0, 0, 0, 0, 0],]
     newBoard.printBoard()
-    kingsList = newBoard.getKingMoves(2,5)
-    printMoveList(kingsList)
+    #kingsList = newBoard.getKingMoves(2,5)
+    #printMoveList(kingsList)
+
+    
+
+    countList = newBoard.getPieceCount()
+    print(countList)
+
+    
     #print(newBoard.checkCheck(2,5))
 

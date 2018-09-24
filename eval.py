@@ -2,6 +2,13 @@
 import board   
 import move
 
+#methods needed for evaluation function:
+# number of legal moves
+# Doubled pawns
+# isolated pawns 
+# blocked pawns 
+# number of legal moves 
+# number of each piece on the board 
 
 
 #definitions 
@@ -17,6 +24,7 @@ class Eval:
         self.board = eBoard
 
     def evaluate(self):
+        print()
         
 
 
