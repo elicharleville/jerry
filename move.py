@@ -43,8 +43,6 @@ def boardAdjust(coordSet):
 
     #switch the coordinates
     # then mirror the y coordinates 
-
-
     coordSet[0][0], coordSet[0][1] = coordSet[0][1], coordSet[0][0]
     coordSet[1][0], coordSet[1][1] = coordSet[1][1], coordSet[1][0]
     #print(coordSet)

@@ -1,6 +1,5 @@
 #git pull https://github.com/elicharleville/jerry.git
 #git push -u origin master
-#from enum import Enum
 from pprint import pprint
 import move
 
@@ -31,14 +30,16 @@ BLACK = -1
 # need some helper functions:
 # checkDiag() --used to help show how far I move diagonally
 # checkCross() -- shows how far I can move horizontally 
-# checkCheck() -- check if the king is in trouble check-- probably needs to be called after every move
+# checkCheck() -- check if the king is in trouble check-- probably needs to be called after every move TODO
 # ^^ because of pins 
 
 def printMoveList(moveList):
+    j = 0
     for i in moveList:
-        print(i.mString)
-
-
+        print(i.mString, end = '  ')
+        j += 1
+        if j % 2 ==  0:
+            print()
 
 def inBound(row, col):
     if row < 8 and row >= 0 and col < 8 and col >= 0:
@@ -104,6 +105,13 @@ class Board:
             rNum = rNum - 1
         print()
         print("   a b c d e f g h")
+    '''
+    def checkSquare(row, col):
+        if not inBound(row, col):
+            return 99
+        else:
+            return self.board[row][col]
+    '''
 
     def legalMoves(self, nextTurn, init): #return list of moves
         moveList = []
@@ -419,10 +427,10 @@ class Board:
                 return True
     
     def pieceCount(self, piece = None):
-        countArray = [0] * 7 #0th index will be 0 for neatness's sake
+        countArray = [0] * 13  #0th index will be 0 for neatness's sake
         for row in range(0,8):
             for col in range(0,8):
-                tSquare = self.board[row][col] * self.nextTurn #whatever side has the next turn gets its pieces counted 
+                tSquare = self.board[row][col] #whatever side has the next turn gets its pieces counted 
                 if tSquare == P:
                     countArray[P] += 1
                 elif tSquare == B:
@@ -435,17 +443,96 @@ class Board:
                     countArray[Q] += 1 
                 elif tSquare == K:
                     countArray[K] += 1 
+                elif tSquare == p:
+                    countArray[P + 6] += 1
+                elif tSquare == b:
+                    countArray[B + 6] += 1
+                elif tSquare == n:
+                    countArray[N + 6] += 1
+                elif tSquare == r:
+                    countArray[R + 6] += 1
+                elif tSquare == q:
+                    countArray[Q + 6] += 1
+                elif tSquare == k:
+                    countArray[K + 6] += 1
         if piece is None:
             return countArray
+        elif piece < 0:
+            return countArray[piece + 6]
         else:
             return countArray[piece]
 
     def moveCount(self):
         return len(self.moveList)
+    
+
+# Doubled pawns
+# isolated pawns 
+# blocked pawns 
+# number of legal moves #
+# number of each piece on the board # 
+
+    def doubledPawns(self): #returns the number of doubled pawns
+        dblPawns = [0] * 2
+        for row in range(0,8):
+            for col in range(0,8): 
+                if self.board[row][col] == P:
+                    if self.board[row - 1][col] == P: #TODO have to check if inBound -- maybe not because of promotions
+                        dblPawns[0] += 1
+                elif self.board[row][col] == p:
+                    if self.board[row + 1][col] == p:
+                        dblPawns[1] += 1
+        return dblPawns
+    
+    def isoPawns(self): #TODO test iso, dpawns, and blocked pawns
+
         
+        rowAdd = [-1, 1, -1, 1]
+        colAdd = [-1, -1, 1, 1]
+
+        isoPawns = [0] * 2  
+        for row in range(0,8):
+            for col in range(0,8):
+                tSquare = self.board[row][col] 
+                if tSquare == P:
+                    iso = True 
+                    for i in range(0,4):
+                        if inBound(row + rowAdd[i], col + colAdd[i]):
+                            if self.board[row + rowAdd[i]][col + colAdd[i]] == P:
+                                iso = False
+                                break
+                    if iso:
+                        isoPawns[0] += 1
+                elif tSquare == p: 
+                    iso = True
+                    for i in range(0,4):
+                        if inBound(row + rowAdd[i], col + colAdd[i]):
+                            if self.board[row + rowAdd[i]][col + colAdd[i]] == p:
+                                iso = False
+                                break
+                    if iso:
+                        isoPawns[1] += 1
+        return isoPawns
+
+    '''
+    blocked pawns are defined as either being blocked in the front by friendly
+    or enemy pieces
+    '''
+    def blockedPawns(self):
+        bPawns =  [0] * 2
+        for row in range(0,8):
+            for col in  range(0,8):
+                if self.board[row][col] == P:
+                    if self.board[row - 1][col] != 0:
+                        bPawns[0] += 1
+                elif self.board[row][col] == p:
+                    if self.board[row + 1][col] != 0:
+                        bPawns[1] += 1
+        return bPawns
 
 #test code/ main
 if __name__ == "__main__":
+
     newBoard = Board(WHITE, False)
     newBoard.printBoard()
     #kingsList = newBoard.kingMoves(2,5)
@@ -458,4 +545,51 @@ if __name__ == "__main__":
     printMoveList(newBoard.moveList)
     print(len(newBoard.moveList))
     #print(newBoard.checkCheck(2,5))
+
+
+    dPawnArr = [[0, 0, 0, 0, 0, 0, 0, 0],                                           
+                [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                [0, 0, 0, 0, 0, p, 0, 0],                                           
+                [0, p, 0, p, 0, p, 0, 0],                                           
+                [0, p, 0, p, 0, 0, 0, 0],                                           
+                [0, 0, 0, 0, 0, 0, 0, 0],                                             
+                [0, 0, 0, 0, 0, 0, 0, 0]]
+    
+    dPawnBoard = Board(WHITE, False, dPawnArr)
+
+    dPawns = dPawnBoard.doubledPawns()
+
+    print(dPawns)
+
+
+    isoPawnArr =   [[0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, p, 0, 0],                                           
+                    [0, p, 0, p, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                             
+                    [0, 0, 0, 0, 0, 0, 0, 0]]
+
+    isoBoard = Board(WHITE, False, isoPawnArr)
+
+    isoPawns = isoBoard.isoPawns()
+
+    print(isoPawns)
+
+    bPawnArr =     [[0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, p, 0, 0],                                           
+                    [0, p, 0, p, 0, P, 0, 0],                                           
+                    [0, P, 0, P, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                           
+                    [0, 0, 0, 0, 0, 0, 0, 0],                                             
+                    [0, 0, 0, 0, 0, 0, 0, 0]]
+ 
+    bBoard = Board(BLACK, False, bPawnArr)
+
+    bPawns = bBoard.blockedPawns()
+    print(bPawns)
+
 
