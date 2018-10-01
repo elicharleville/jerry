@@ -32,19 +32,42 @@ p, b, n, r, q, k = -1, -2, -3, -4, -5, -6
 WHITE = 1
 BLACK = -1
 
+'''
+What I'm going for: 
+int maxi( int depth ) {
+    if ( depth == 0 ) return evaluate();
+    int max = -oo;
+    for ( all moves) {
+        score = mini( depth - 1 );
+        if( score > max )
+            max = score;
+    }
+    return max;
+}
 
+int mini( int depth ) {
+    if ( depth == 0 ) return -evaluate();
+    int min = +oo;
+    for ( all moves) {
+        score = maxi( depth - 1 );
+        if( score < min )
+            min = score;
+    }
+    return min;
+}
+'''
 
 class Game:
     def __init__(self, board):
-        self.board = board
+        self.board = board # need to keep track of next move 
     
     def MMDriver(self):
         print()
 
-    def maxAlg(self):
+    def mini(self, depth, maximize): # maximize will be a bool 
         print()
 
-    def minAlg(self):
+    def maxi(self, depth, maximize):
         print()
     
     def run(self):
@@ -54,6 +77,7 @@ class Game:
         piece = self.board.board[move.coordSet[0][0]][move.coordSet[0][1]] 
         self.board.board[move.coordSet[0][0]][move.coordSet[0][1]] = 0 # set orig place to empty
         self.board.board[move.coordSet[1][0]][move.coordSet[1][1]] = piece 
+
 
 if __name__ == "__main__":
     board = board.Board(WHITE)
