@@ -580,7 +580,7 @@ if __name__ == "__main__":
 
     bPawnArr =     [[0, 0, 0, 0, 0, 0, 0, 0],                                           
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
-                    [0, 0, 0, 0, 0, p, 0, 0],                                           
+                    [0, 0, 0, 0, 0, p, 0, 0],                                     
                     [0, p, 0, p, 0, P, 0, 0],                                           
                     [0, P, 0, P, 0, 0, 0, 0],                                           
                     [0, 0, 0, 0, 0, 0, 0, 0],                                           
@@ -588,7 +588,7 @@ if __name__ == "__main__":
                     [0, 0, 0, 0, 0, 0, 0, 0]]
  
     bBoard = Board(BLACK, False, bPawnArr)
-
+    
     bPawns = bBoard.blockedPawns()
     print(bPawns)
 
