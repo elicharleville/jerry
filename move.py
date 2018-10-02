@@ -119,6 +119,7 @@ class Move:
             self.mString = self.coordsToMove()
         if promote is None: self.promotion = False
         else: self.promotion = promote
+        self.defeated = None # if a piece is taken, this is where its stored
             
 
     def printMove(self):  # prints the move
