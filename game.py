@@ -25,12 +25,7 @@ import evaluate
     - Arrays for storing potential board states? 
 '''
 
-# definitions
 
-P, B, N, R, Q, K = 1, 2, 3, 4, 5, 6
-p, b, n, r, q, k = -1, -2, -3, -4, -5, -6
-WHITE = 1
-BLACK = -1
 
 '''
 What I'm going for: 
@@ -56,22 +51,48 @@ int mini( int depth ) {
     return min;
 }
 '''
+# definitions
+
+P, B, N, R, Q, K = 1, 2, 3, 4, 5, 6
+p, b, n, r, q, k = -1, -2, -3, -4, -5, -6
+WHITE = 1
+BLACK = -1
 
 class Game:
     def __init__(self, board):
-        self.board = board # need to keep track of next move 
+        self.board = board # need to keep track of next move
+        self.moveStack = []
     
-    def MMDriver(self):
-        print()
+    def gameState(self):
+        self.board.printBoard()
 
-    
+    def negaMax(self, depth, color):
+        if depth == 0:
+            return color * evaluate.evaluate(self.board) # TODO still need to return move obj.
+        bestMove = -9999
+        moveList = self.board.legalMoves()
+        for move in moveList: 
+            self.makeMove(move)
+            bestMove = max(bestMove, -self.negaMax(depth - 1, -color))
+            self.undo()
+        return bestMove 
+
     def run(self):
         print()
 
     def makeMove(self, move): # takes in move object 
         piece = self.board.board[move.coordSet[0][0]][move.coordSet[0][1]] 
         self.board.board[move.coordSet[0][0]][move.coordSet[0][1]] = 0 # set orig place to empty
+        move.defeated = self.board.board[move.coordSet[1][0]][move.coordSet[1][1]]
         self.board.board[move.coordSet[1][0]][move.coordSet[1][1]] = piece 
+        self.moveStack.append(move)
+    
+    def undo(self):
+        move = self.moveStack.pop() #problem: have to remember what was there in the first place 
+        piece = self.board.board[move.coordSet[1][0]][move.coordSet[1][1]] 
+        self.board.board[move.coordSet[0][0]][move.coordSet[0][1]] = piece 
+        self.board.board[move.coordSet[1][0]][move.coordSet[1][1]] = move.defeated 
+
 
 
 if __name__ == "__main__":
@@ -79,5 +100,9 @@ if __name__ == "__main__":
     move = move.Move("g1f3")
     newGame = Game(board)
     newGame.makeMove(move)
+    newGame.undo()
 
-    newGame.board.printBoard()
+
+    
+
+    newGame.gameState()

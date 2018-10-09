@@ -14,6 +14,9 @@ import move
 P, B, N, R, Q, K = 1, 2, 3, 4, 5, 6
 p, b, n, r, q, k = -1, -2, -3, -4, -5, -6
 
+WHITE = 1
+BLACK = -1
+
 
 '''
 f(p) = 200(K-K')
@@ -31,26 +34,17 @@ M = Mobility (the number of legal moves)
 
 ^^^ What i'm going for
 '''
-
-WHITE = 1
-BLACK = -1
-
-class Eval:
-    def __init__(self, eBoard): # Evalue is the value of the current position TODO change this 
-        self.board = eBoard
-        self.eValue = self.evaluate()
-
-    def evaluate(self):
-        wMoveList  = self.board.legalMoves(WHITE, True)
-        bMoveList = self.board.legalMoves(BLACK, True)
+def evaluate(board):
+        wMoveList  = board.legalMoves(WHITE, True)
+        bMoveList = board.legalMoves(BLACK, True)
 
         wMoveCount = len(wMoveList)
         bMoveCount = len(bMoveList)
 
-        pieceList = self.board.pieceCount()
-        dblPawns = self.board.doubledPawns() #TODO need to have these returned values for both sides. 
-        blockPawns = self.board.blockedPawns()
-        isoPawns  =self.board.isoPawns()
+        pieceList = board.pieceCount()
+        dblPawns = board.doubledPawns() #TODO need to have these returned values for both sides. 
+        blockPawns = board.blockedPawns()
+        isoPawns  =board.isoPawns()
 
         wKings = pieceList[K]
         bKings = pieceList[K+6]
@@ -89,8 +83,6 @@ class Eval:
 
         return eValue
 
-        
-
 
 if __name__ == "__main__":
     dPawnArr = [[0, 0, 0, 0, 0, 0, 0, 0],                                           
@@ -104,9 +96,7 @@ if __name__ == "__main__":
 
 
     mainBoard = board.Board(WHITE, False, dPawnArr)
-    newEval = Eval(mainBoard)
-    print(newEval.eValue)
 
-
+    print(evaluate(mainBoard))
 
 
