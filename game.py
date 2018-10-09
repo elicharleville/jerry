@@ -64,11 +64,6 @@ class Game:
     def MMDriver(self):
         print()
 
-    def mini(self, depth, maximize): # maximize will be a bool 
-        print()
-
-    def maxi(self, depth, maximize):
-        print()
     
     def run(self):
         print()
