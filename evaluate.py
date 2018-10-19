@@ -60,7 +60,7 @@ def evaluate(board):
         bPawns = pieceList[P+6]
 
 
-        print("White kings: " + str(wKings))
+        #print("White kings: " + str(wKings))
 
         eValue = 200 * (wKings - bKings) \
                 + 9 * (wQueens - bQueens) \
@@ -71,7 +71,7 @@ def evaluate(board):
                 + 0.1 * (wMoveCount - bMoveCount)
     
     
-
+        '''
         print(200 * (wKings - bKings))
         print(9 * (wQueens - bQueens))
         print(5 * (wRooks - bRooks) )
@@ -79,7 +79,7 @@ def evaluate(board):
         print(1 * (wPawns - bPawns))
         print(0.5 * ((dblPawns[0] - dblPawns[1]) + (blockPawns[0] - blockPawns[1]) + (isoPawns[0] - isoPawns[1])))
         print( 0.1 * (wMoveCount - bMoveCount))
-
+        '''
 
         return eValue
 

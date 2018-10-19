@@ -1,6 +1,8 @@
 import board
 import move
 import evaluate
+import time
+import collections 
 
 '''
 -This class will primarily be responsible for tracking the board state of a game as its played.
@@ -24,34 +26,9 @@ import evaluate
     - Board 
     - Arrays for storing potential board states? 
 '''
-
-
-
-'''
-What I'm going for: 
-int maxi( int depth ) {
-    if ( depth == 0 ) return evaluate();
-    int max = -oo;
-    for ( all moves) {
-        score = mini( depth - 1 );
-        if( score > max )
-            max = score;
-    }
-    return max;
-}
-
-int mini( int depth ) {
-    if ( depth == 0 ) return -evaluate();
-    int min = +oo;
-    for ( all moves) {
-        score = maxi( depth - 1 );
-        if( score < min )
-            min = score;
-    }
-    return min;
-}
-'''
 # definitions
+
+#moveTuple = collections.namedtuple('moveTuple', ['moveValue', 'move'])
 
 P, B, N, R, Q, K = 1, 2, 3, 4, 5, 6
 p, b, n, r, q, k = -1, -2, -3, -4, -5, -6
@@ -66,18 +43,35 @@ class Game:
     def gameState(self):
         self.board.printBoard()
 
-    def negaMax(self, depth, color):
+    def negaMax(self, depth, color, move):
         if depth == 0:
-            return color * evaluate.evaluate(self.board) # TODO still need to return move obj.
-        bestMove = -9999
-        moveList = self.board.legalMoves()
+            move.eValue = color * evaluate.evaluate(self.board)
+            print(color * evaluate.evaluate(self.board))
+            return move # TODO still need to return move obj.
+        bestMove = move
+        moveList = self.board.legalMoves(color, True)
         for move in moveList: 
             self.makeMove(move)
-            bestMove = max(bestMove, -self.negaMax(depth - 1, -color))
-            self.undo()
-        return bestMove 
 
-    def run(self):
+            print()
+            print("depth: " + str(depth))
+            print("move: " + str(move.mString))
+            self.gameState()
+            print() 
+            #bestMove = max(bestMove, -self.negaMax(depth - 1, -color, move).eValue)
+
+            testMove = self.negaMax(depth - 1, -color, move)
+            testMove.eValue *= -1
+            if testMove.eValue > bestMove.eValue:
+                bestMove = testMove
+
+            #print(color)
+            #print(move.mString)
+            #print(bestMove)
+            self.undo()
+        return bestMove
+
+    def run(self): #TODO 
         print()
 
     def makeMove(self, move): # takes in move object 
@@ -85,7 +79,8 @@ class Game:
         self.board.board[move.coordSet[0][0]][move.coordSet[0][1]] = 0 # set orig place to empty
         move.defeated = self.board.board[move.coordSet[1][0]][move.coordSet[1][1]]
         self.board.board[move.coordSet[1][0]][move.coordSet[1][1]] = piece 
-        self.moveStack.append(move)
+        self.moveStack.append(move) 
+        #TODO  Make move needs to change board.nextTurn 
     
     def undo(self):
         move = self.moveStack.pop() #problem: have to remember what was there in the first place 
@@ -93,16 +88,25 @@ class Game:
         self.board.board[move.coordSet[0][0]][move.coordSet[0][1]] = piece 
         self.board.board[move.coordSet[1][0]][move.coordSet[1][1]] = move.defeated 
 
-
-
-if __name__ == "__main__":
+if __name__ == "__main__":    
     board = board.Board(WHITE)
     move = move.Move("g1f3")
     newGame = Game(board)
     newGame.makeMove(move)
-    newGame.undo()
+    #testing undo
+    #newGame.undo()
+    start = time.time()
+
+    
+    moveScore = newGame.negaMax(2, WHITE, move)
 
 
+    end = time.time()
+
+    print()
+    #print("move Score: ")
+    print(moveScore.mString)
+    #print(end - start)
     
 
     newGame.gameState()

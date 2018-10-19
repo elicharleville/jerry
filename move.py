@@ -63,7 +63,7 @@ def boardAdjust(coordSet):
         
 
 
-def strToCoords(cString): #helper method to 
+def strToCoords(cString): #helper method to swtich a string to coords 
     colC = cString[0]
     rowC = cString[1] #row and col chars inited
 
@@ -119,8 +119,8 @@ class Move:
             self.mString = self.coordsToMove()
         if promote is None: self.promotion = False
         else: self.promotion = promote
+        self.eValue = -9999.9 # TODO  can be cleaner 
         self.defeated = None # if a piece is taken, this is where its stored
-            
 
     def printMove(self):  # prints the move
         print(self.mString)
