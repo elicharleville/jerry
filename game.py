@@ -45,19 +45,20 @@ class Game:
 
     def negaMax(self, depth, color, move):
         if depth == 0:
-            move.eValue = color * evaluate.evaluate(self.board)
-            print(color * evaluate.evaluate(self.board))
-            return move # TODO still need to return move obj.
+            move.eValue = color * evaluate.evaluate(self.board) 
+            #print(color * evaluate.evaluate(self.board))
+            return move 
         bestMove = move
         moveList = self.board.legalMoves(color, True)
+        #print(self.board.nextTurn)
         for move in moveList: 
             self.makeMove(move)
 
-            print()
-            print("depth: " + str(depth))
-            print("move: " + str(move.mString))
+            #print()
+            #print("depth: " + str(depth))
+            #print("move: " + str(move.mString))
             self.gameState()
-            print() 
+            #print() 
             #bestMove = max(bestMove, -self.negaMax(depth - 1, -color, move).eValue)
 
             testMove = self.negaMax(depth - 1, -color, move)
@@ -71,8 +72,23 @@ class Game:
             self.undo()
         return bestMove
 
-    def run(self): #TODO 
+    def runHuman(self, depth): #TODO 
         print()
+    
+    def runComp(self, depth, numMoves): #TODO
+        initMove = move.Move("a2a2")
+        #nextMove = testGame.negaMax(depth, BLACK, initMove)
+        
+        for _ in range(numMoves):
+            nextMove = testGame.negaMax(depth, BLACK, initMove) 
+            testGame.makeMove(nextMove)
+            print(nextMove.mString)
+            self.gameState()
+
+            nextMove = testGame.negaMax(depth, WHITE, initMove)     
+            testGame.makeMove(nextMove)
+            print(nextMove.mString)
+            self.gameState()
 
     def makeMove(self, move): # takes in move object 
         piece = self.board.board[move.coordSet[0][0]][move.coordSet[0][1]] 
@@ -89,24 +105,18 @@ class Game:
         self.board.board[move.coordSet[1][0]][move.coordSet[1][1]] = move.defeated 
 
 if __name__ == "__main__":    
-    board = board.Board(WHITE)
-    move = move.Move("g1f3")
-    newGame = Game(board)
-    newGame.makeMove(move)
-    #testing undo
-    #newGame.undo()
-    start = time.time()
+    testBoard = board.Board(WHITE) 
 
-    
-    moveScore = newGame.negaMax(2, WHITE, move)
+    testGame  = Game(testBoard)
 
-
-    end = time.time()
-
+    #end = time.time()
+    '''
     print()
     #print("move Score: ")
     print(moveScore.mString)
     #print(end - start)
-    
+    ''' 
+    testGame.runComp(2, 6)
+    print(evaluate.evaluate(testGame.board))
 
-    newGame.gameState()
+    testGame.gameState()
