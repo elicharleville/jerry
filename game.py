@@ -45,11 +45,11 @@ class Game:
 
     def negaMax(self, depth, color, move):
         if depth == 0:
-            move.eValue = color * evaluate.evaluate(self.board) 
+            move.eValue = -color * evaluate.evaluate(self.board) 
             #print(color * evaluate.evaluate(self.board))
             return move 
         bestMove = move
-        moveList = self.board.legalMoves(color, True)
+        moveList = self.board.legalMoves(-color, True)
         #print(self.board.nextTurn)
         for move in moveList: 
             self.makeMove(move)
@@ -57,7 +57,7 @@ class Game:
             #print()
             #print("depth: " + str(depth))
             #print("move: " + str(move.mString))
-            self.gameState()
+            #self.gameState()
             #print() 
             #bestMove = max(bestMove, -self.negaMax(depth - 1, -color, move).eValue)
 
@@ -73,20 +73,38 @@ class Game:
         return bestMove
 
     def runHuman(self, depth): #TODO 
+        initMove = move.Move("a2a2")
+
+        self.gameState()
+        
+        while True:
+            moveStr = str(input("Your Move: "))
+            humanMove = move.Move(moveStr) 
+            self.makeMove(humanMove)
+            #print(nextMove.mString)
+            #self.gameState()
+
+            nextMove = self.negaMax(depth, BLACK, initMove)     
+            self.makeMove(nextMove)
+            print(f"Jerry's move: {nextMove.mString}")
+            self.gameState()
+
+
+
         print()
     
     def runComp(self, depth, numMoves): #TODO
-        initMove = move.Move("a2a2")
+        initMove = move.Move("e7e7")
         #nextMove = testGame.negaMax(depth, BLACK, initMove)
         
         for _ in range(numMoves):
-            nextMove = testGame.negaMax(depth, BLACK, initMove) 
-            testGame.makeMove(nextMove)
+            nextMove = self.negaMax(depth, WHITE, initMove) 
+            self.makeMove(nextMove)
             print(nextMove.mString)
             self.gameState()
 
-            nextMove = testGame.negaMax(depth, WHITE, initMove)     
-            testGame.makeMove(nextMove)
+            nextMove = self.negaMax(depth, BLACK, initMove)     
+            self.makeMove(nextMove)
             print(nextMove.mString)
             self.gameState()
 
@@ -116,7 +134,7 @@ if __name__ == "__main__":
     print(moveScore.mString)
     #print(end - start)
     ''' 
-    testGame.runComp(2, 6)
+    testGame.runHuman(2)
     print(evaluate.evaluate(testGame.board))
 
     testGame.gameState()
