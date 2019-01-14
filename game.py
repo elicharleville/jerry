@@ -134,7 +134,7 @@ if __name__ == "__main__":
     print(moveScore.mString)
     #print(end - start)
     ''' 
-    testGame.runHuman(2)
+    testGame.runHumanVsComputer(2)
     print(evaluate.evaluate(testGame.board))
 
     testGame.gameState()
