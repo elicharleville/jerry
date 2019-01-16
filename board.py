@@ -1,5 +1,4 @@
-#git pull https://github.com/elicharleville/jerry.git
-#git push -u origin master
+
 from pprint import pprint
 import move
 
@@ -69,6 +68,7 @@ class Board:
         
                   
     #prints the board in graphics mode
+    #TODO print board from black's POV
     def printBoard(self):
         rNum = 8
         #cArray = ['a', 'b', 'c', 'd', 'e', 'f', 'g','h']

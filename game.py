@@ -72,28 +72,45 @@ class Game:
             self.undo()
         return bestMove
 
-    def runHuman(self, depth): #TODO 
-        initMove = move.Move("a2a2")
+    def runHuman(self, depth, side): 
+        #@parm side: str -- "white" or "black" 
+        if side == "white":
+            initMove = move.Move("a2a2")
 
-        self.gameState()
-        
-        while True:
-            moveStr = str(input("Your Move: "))
-            humanMove = move.Move(moveStr) 
-            self.makeMove(humanMove)
-            #print(nextMove.mString)
-            #self.gameState()
-
-            nextMove = self.negaMax(depth, BLACK, initMove)     
-            self.makeMove(nextMove)
-            print(f"Jerry's move: {nextMove.mString}")
             self.gameState()
+            
+            while True:
+                moveStr = str(input("Your Move: "))
+                humanMove = move.Move(moveStr) 
+                self.makeMove(humanMove)
+                #print(nextMove.mString)
+                #self.gameState()
+
+                nextMove = self.negaMax(depth, BLACK, initMove)     
+                self.makeMove(nextMove)
+                print(f"Jerry's move: {nextMove.mString}")
+                self.gameState()
+
+        
+        if side == "black":
+            initMove = move.Move("a2a2")
+
+            self.gameState()
+            
+            while True:
+                nextMove = self.negaMax(depth, WHITE, initMove)     
+                self.makeMove(nextMove)
+                print(f"Jerry's move: {nextMove.mString}")
+                self.gameState()
 
 
-
-        print()
+                moveStr = str(input("Your Move: "))
+                humanMove = move.Move(moveStr) 
+                self.makeMove(humanMove)
+                #print(nextMove.mString)
+                #self.gameState()
     
-    def runComp(self, depth, numMoves): #TODO
+    def runComp(self, depth, numMoves): 
         initMove = move.Move("e7e7")
         #nextMove = testGame.negaMax(depth, BLACK, initMove)
         
@@ -113,8 +130,12 @@ class Game:
         self.board.board[move.coordSet[0][0]][move.coordSet[0][1]] = 0 # set orig place to empty
         move.defeated = self.board.board[move.coordSet[1][0]][move.coordSet[1][1]]
         self.board.board[move.coordSet[1][0]][move.coordSet[1][1]] = piece 
-        self.moveStack.append(move) 
-        #TODO  Make move needs to change board.nextTurn 
+        self.moveStack.append(move)
+        if self.board.nextTurn == WHITE:
+            self.board.nextTurn == BLACK
+        else:
+            self.board.nextTurn == WHITE
+        
     
     def undo(self):
         move = self.moveStack.pop() #problem: have to remember what was there in the first place 
@@ -125,7 +146,12 @@ class Game:
 if __name__ == "__main__":    
     testBoard = board.Board(WHITE) 
 
-    testGame  = Game(testBoard)
+
+    testGame = Game(testBoard)
+
+    testGame.runHuman(2, "black")
+
+
 
     #end = time.time()
     '''
@@ -134,7 +160,6 @@ if __name__ == "__main__":
     print(moveScore.mString)
     #print(end - start)
     ''' 
-    testGame.runHumanVsComputer(2)
-    print(evaluate.evaluate(testGame.board))
 
-    testGame.gameState()
+
+
